@@ -43,12 +43,8 @@
 Maximum error of the center-to-center distance between two-spherules in contact never exceeds 0.005 (typically < 0.001).
 
 ### Performance
-This code is likely one of the fastest tunable-CCA codes reported so far. For example,
+This code is probably one of the fastest tunable-CCA codes reported so far. For computing a fractal-like aggregate with parameter Df=2.1, kf=1.1, and N=65536, this code consumed only 3784 seconds (Intel Xeon E5 (3.5GHz)). In comparison, Skorupski et al. 2014<sup>(a)</sup> reported that their original tunable-CCA code consumed 21809 seconds (AMD athron II X4 640 (3.0GHz)) for computing an aggregate with the same parameter.
 
- | Code  | Computer environment | computation time (sec) <br> *N*=16384 |computation time (sec) <br> *N*=65536|
- | ---|---|---|---|
- |Skorupski et al. 2014<sup>(a)</sup> <br> (JAVA)| AMD athron II X4 640 (3.0GHz), <br> single core| 158 | 21809 |
- |This code <br> (C++)| Intel Xeon E5 (3.5GHz), <br> no explicit multi-core | 72 | 3784 | |
 <sup>(a)</sup> Skorupski et al. 2014, A fast and accurate implementation of tunable algorithms used for generation of fractal-like aggregate models, *Physica A* 404, 106-117.
 
 ### Random number seed
