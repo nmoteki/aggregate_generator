@@ -1,7 +1,7 @@
 #include <cmath>
 #include <random>
 #include <Eigen/Dense>
-#include "aggregate_gen.hpp"
+#include "aggregate_gen_SA.hpp"
 using namespace Eigen;
 using namespace std;
 

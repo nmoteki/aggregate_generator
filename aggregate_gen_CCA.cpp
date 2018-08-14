@@ -5,20 +5,15 @@
 #include <random>
 #include <chrono>
 #include <Eigen/Dense>
-#include "aggregate_gen.hpp"
+#include <omp.h>
+#include "aggregate_gen_SA.hpp"
 using namespace Eigen;
 using namespace std;
 
 
-
-//extern default_random_engine re; //default seed
-//extern uniform_real_distribution<float> urf;
-
-//MatrixXf aggregate_gen_SA(const float& a, const int& num_sph, const float& kf, const float& Df, const float& tol);
-
 //return pos_sph matrix
 MatrixXf aggregate_gen_CCA(const float& a, const int& num_sph_SA, const int& levels, const float& kf, const float& Df, const float& tol){
-  int iter1max {10000};
+  int iter1max {1000};
   int iter2max {10000};
 
   int num_SA_agg= pow(2,levels);
@@ -82,11 +77,9 @@ MatrixXf aggregate_gen_CCA(const float& a, const int& num_sph_SA, const int& lev
           bool found {false};
 
           //--- translation of agg1 to random position on the sphere of radius rN
-          int iter1= 0;
-          while(iter1 != iter1max){
-              ++iter1;
-              pos_sph_agg1.colwise() -= pos_sph_agg1.rowwise().mean(); // translate the centroid of agg1 to origin
+          for(int iter1= 0; iter1 != iter1max; ++iter1){
 
+              pos_sph_agg1.colwise() -= pos_sph_agg1.rowwise().mean(); // translate the centroid of agg1 to origin
 
               float phi;
               phi= 2*M_PI*urf(re);
@@ -106,44 +99,65 @@ MatrixXf aggregate_gen_CCA(const float& a, const int& num_sph_SA, const int& lev
               nvec << sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta); //axis of rotation randomly choosen over unit sphere
 
 
+
+
               // random rotation of aggregate 2 around the centroid (origin)
-              int iter2= 0;
-              while(iter2 != iter2max){
-                  ++iter2;
+              #pragma omp parallel for
+              for(int iter2= 0; iter2 < iter2max; ++iter2){
+                  bool found_local;
+                  #pragma omp atomic read
+                  found_local= found;
+                  if(found) continue;
+
+                  MatrixXf pos_sph_agg1_thread(3,N1); // thread local copy of pos_sph_agg1
+                  MatrixXf pos_sph_agg2_thread(3,N2); // thread local copy of pos_sph_agg2
+                  pos_sph_agg1_thread= pos_sph_agg1;
+                  pos_sph_agg2_thread= pos_sph_agg2;
 
                   float psi; // angle of rotation
-                  psi= 2*M_PI*urf(re);
+
+                  #pragma omp critical
+                  {
+                     psi= 2*M_PI*urf(re);
+                  }
+
                   Matrix3f rot_mat; // 3D rotation matrix
                   rot_mat= AngleAxisf(psi,nvec);
-                  for(int i= 0; i < N2; ++i) pos_sph_agg2.col(i)=rot_mat*pos_sph_agg2.col(i); // random rotation of agg2
+                  for(int i= 0; i < N2; ++i) pos_sph_agg2_thread.col(i)=rot_mat*pos_sph_agg2_thread.col(i); // random rotation of agg2
                   //  cout << "iter2 pos_sph_agg2 " << endl << pos_sph_agg2 << endl;
 
                   bool attached {false};
                   for(int i= 0; i < N2; ++i){
                       RowVectorXf dist_pair(N1);
-                      dist_pair=(pos_sph_agg1.colwise()-pos_sph_agg2.col(i)).colwise().norm();
+                      dist_pair=(pos_sph_agg1_thread.colwise()-pos_sph_agg2_thread.col(i)).colwise().norm();
                     //  cout << "dist_pair" << endl << dist_pair << endl;
                       float mindist= dist_pair.minCoeff();
                       //cout << "2*a, mindist " << 2*a << ' ' << mindist << endl;
                       bool overrapped {mindist <= (2*a-tol)};
                       if(overrapped) {
-                        exit;
+                        //exit; // 20180813 removed
+                        attached= false; // 20180813 added
+                        break; // 20180813 added
                       } else {
                         attached= attached || (mindist < 2*a+tol);
                       }
                   }
 
-
                   // construction of new aggregate if attached condition is satisfied
                   if(attached){
                       //cout << "attached " << attached << endl;
                       MatrixXf pos_sph_agg_tmp(3,N1+N2);
-                      pos_sph_agg_tmp.block(0,0,3,N1)= pos_sph_agg1;
-                      pos_sph_agg_tmp.block(0,N1,3,N2)= pos_sph_agg2;
+                      pos_sph_agg_tmp.block(0,0,3,N1)= pos_sph_agg1_thread;
+                      pos_sph_agg_tmp.block(0,N1,3,N2)= pos_sph_agg2_thread;
                       pos_sph_agg_tmp.colwise() -= pos_sph_agg_tmp.rowwise().mean(); // translate the centroid of new agg to origin
-                      pos_sph_agg.push_back(pos_sph_agg_tmp); // update the aggregate
-                      found = true;
-                      break; // exit iter2 loop
+                      #pragma omp critical
+                      {
+                          pos_sph_agg.push_back(pos_sph_agg_tmp); // update the aggregate
+                          found = true;
+                          //break; // exit iter2 loop
+                          if(k==levels)  cout << "number of threads for parallel search: " << omp_get_num_threads() << endl;
+                      }
+
                   }
               }// iter2 loop
 
@@ -171,14 +185,34 @@ MatrixXf aggregate_gen_CCA(const float& a, const int& num_sph_SA, const int& lev
   assert(totnum_sph == pos_sph_agg_final.cols());
 
   // final check of the attached condition
-  ArrayXf mindist_c(totnum_sph);
+  double buf_factor= 5.0; //buffer factor of torelance
+  bool non_overlapped;
+  ArrayXf min_diff_from2a(totnum_sph);
   for(int i= 0; i< totnum_sph; ++i){
-      //cout << i << ", " << ((pos_sph_agg_final.colwise()-pos_sph_agg_final.col(i)).colwise().norm().array()-2*a).array().abs().minCoeff() << endl;
-      mindist_c(i)=((pos_sph_agg_final.colwise()-pos_sph_agg_final.col(i)).colwise().norm().array()-2*a).array().abs().minCoeff();
+      ArrayXf distance_from_this_sph(totnum_sph);
+      distance_from_this_sph= (pos_sph_agg_final.colwise()-pos_sph_agg_final.col(i)).colwise().norm().array();
+      non_overlapped= {(distance_from_this_sph-(2*a-buf_factor*tol) > 0)(i) == false};
+      for(int j= 0; j< totnum_sph; ++j){
+          if(j != i) {
+            non_overlapped= non_overlapped && ((distance_from_this_sph-(2*a-buf_factor*tol) > 0)(j) == true);
+          }
+      }
+     //cout << i << ", " << (distance_from_this_sph-(2*a-buf_factor*tol) >= 0).transpose() << endl ;
+      min_diff_from2a(i)=((pos_sph_agg_final.colwise()-pos_sph_agg_final.col(i)).colwise().norm().array()-2*a).array().abs().minCoeff();
   }
-  cout << "maximum error in attached distance : " << mindist_c.maxCoeff() << endl;
-  assert(mindist_c.maxCoeff() < 5*tol);
+  bool attached_at_least_1pair {min_diff_from2a.maxCoeff() < buf_factor*tol};
 
-  return pos_sph_agg_final;
+  string non_overlapped_test= {non_overlapped ? "Success" : "Failed"};
+  string attached_at_least_1pair_test= {attached_at_least_1pair ? "Success" : "Failed"};
+  cout << "non_overlapped_check: " << non_overlapped_test << endl;
+  cout << "attached_at_least_1pair_check: " << attached_at_least_1pair_test << endl;
+  if(non_overlapped && attached_at_least_1pair){
+    return pos_sph_agg_final;
+  }else{
+    cout << "Geometry check failed! Please try other (kf, Df) pair." << endl;
+    exit(1);
+  }
+
+
 
 }
