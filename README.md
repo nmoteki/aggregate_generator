@@ -3,9 +3,9 @@
 
 ### History:
 #### Aug 14, 2018:
-  1. Bugfix: An algorithm error causing the partial overlapping between some spherules has been fixed.
-  2. Improve reliability: Internal tests of non-overlapping and attached conditions are added.
-  3. Improve performance: The MonteCarlo search of an attached-and-nonoverlapped configuration has been parallelized using openmp.
+  -Bugfix: An algorithm error causing the partial overlapping between some spherules has been fixed.
+  -Improve reliability: Internal tests of non-overlapping and attached conditions are added.
+  -Improve performance: The MonteCarlo search of an attached-and-nonoverlapped configuration has been parallelized using openmp.
 
 #### Oct 28, 2016:
   Initial release.
@@ -33,7 +33,7 @@
 
   3. Run the executable by
 
-      ./aggregate_gen_main [parameter_list]
+      './aggregate_gen_main [parameter_list]'
 
     [parameter_list] == *num_sph_SA* *levels*  *kf*  *Df*
 
