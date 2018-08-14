@@ -36,15 +36,16 @@
 ```
            ./aggregate_gen_main [parameter_list]
 ```
-    [parameter_list] == *num_sph_SA* *levels*  *kf*  *Df*
+```
+    [parameter_list] == num_sph_SA levels kf Df
 
-    * *num_sph_SA* : Number of spherules in initial clusters in the 1st level of cluster-cluster aggregation (4).
-    * *levels* : Number of hierarchical levels in cluster-cluster aggregation (10).
-    * *kf* : Fractal prefactor (1.0).
-    * *Df* : Fractal dimension (2.5).
+    num_sph_SA : Number of spherules in initial clusters in the 1st level of cluster-cluster aggregation (4).
+    levels : Number of hierarchical levels in cluster-cluster aggregation (10).
+    kf : Fractal prefactor (1.0).
+    Df : Fractal dimension (2.5).
 
     If you skip the [parameter_list], the code uses the default values in the parenthesis. Total number of spherules is *N* = num_sph_SA*2<sup>levels</sup>.
-
+```
 
 ### Output data
   The result is written in a text file "agg_N???_kf???_Df???.out", where the three strings ??? indicate the total number of spherules *N*, the fractal prefactor *kf*, and the fractal dimension *Df*.
@@ -55,15 +56,15 @@
 ### Accuracy
 Maximum error of the center-to-center distance between two-spherules in contact never exceeds 0.005 (typically < 0.001). You can change the tolerance by changing the parameter "tol" defined in "aggregate_gen_main.cpp"
 
-### Limitation of (kf,Df)
-Under the constraint of the fractal-scaling law, finding of an attached-and-nonoverlapped aggregate configuration could be unrealistic for compact (i.e., closely-packed) aggregates. To avoid the infinite looping of the search algorithm, please choose the geometrical parameters (kf,Df) to be kf+Df < ~3.4.
+### Allowed parameter range
+Under the constraint of the fractal-scaling law, finding of an attached-and-nonoverlapped aggregate configuration could be unrealistic for compact (i.e., closely-packed) aggregates. To avoid the infinite looping of the search algorithm, please choose the geometric parameters (kf,Df) to be kf+Df < ~3.5.
 
 ### Random number seed
 If necessary, random number seed can be changed at line14-15 of "aggregate_gen_main.cpp".
-
+```
     (line 14) default_random_engine re(random_device{}()); // random seed
     (line 15) //default_random_engine re; // fixed seed
-
+```
 By default, the seed of random_number sequence is automatically changed in each execution (using random_device{}()). Fixed seed will be used if you uncomment 15th line and comment out the 14th line.
 
 ### Theory
