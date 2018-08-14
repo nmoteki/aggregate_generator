@@ -17,9 +17,9 @@
 
 
 ### Prerequisites:
-  1. A C++ compiler supporting C++17 and openmp. The author tested the code using the g++ version 7.3.0.
-  2. A C++ library for linear algebra "Eigen" with version 3.3.5 or newer. The author tested the code using the Eigen version 3.3.5.
-  3. An automated compilation and build system "CMake". The author tested the code using the CMake version 3.10.2.
+  -A C++ compiler supporting C++17 and openmp. The author tested the code using the g++ version 7.3.0.
+  -A C++ library for linear algebra "Eigen" with version 3.3.5 or newer. The author tested the code using the Eigen version 3.3.5.
+  -An automated compilation and build system "CMake". The author tested the code using the CMake version 3.10.2.
 
 
 ### Usage:
@@ -28,12 +28,12 @@
 
   2. Compilation and linking are performed by
 
-            cmake .
-            make
+        cmake .
+        make
 
   3. Run the executable by
 
-           ./aggregate_gen_main [parameter_list]
+      ./aggregate_gen_main [parameter_list]
 
     [parameter_list] == *num_sph_SA* *levels*  *kf*  *Df*
 
@@ -54,8 +54,8 @@
 ### Accuracy
 Maximum error of the center-to-center distance between two-spherules in contact never exceeds 0.005 (typically < 0.001) by default. You can change this tolerance by changing the parameter "tol" defined in "aggregate_gen_main.cpp".
 
-### Limitation of (*kf*,*Df*)
-Under the constraint of the fractal-scaling law, finding of an attached-and-nonoverlapped aggregate configuration could be unrealistic for compact (i.e., closely-packed) aggregates. To avoid the infinite looping of the search algorithm, please choose the geometrical parameters (*kf*,*Df*) to be *kf*+*Df* < ~3.4.
+### Limitation of the geometeric parameters
+Under the constraint of the fractal-scaling law, finding of an attached-and-nonoverlapped aggregate configuration could be unrealistic for compact (i.e., closely-packed) aggregates. To avoid the infinite looping of the search algorithm, please choose the geometric parameters (*kf*,*Df*) to be *kf*+*Df* < ~3.4.
 
 ### Random number seed
 If necessary, random number seed can be changed at line14-15 of "aggregate_gen_main.cpp".
