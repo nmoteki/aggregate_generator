@@ -3,9 +3,9 @@
 
 ### History:
 #### Aug 14, 2018:
-  Bugfix: An algorithm error causing the partial overlapping between some spherules has been fixed.
-  Improve reliability: Internal tests of non-overlapping and attached conditions are added.
-  Improve performance: The MonteCarlo search of an attached-and-nonoverlapped aggregate configuration is parallelized using openmp.
+  1. Bugfix: An algorithm error causing the partial overlapping between some spherules has been fixed.
+  2. Improve reliability: Internal tests of non-overlapping and attached conditions are added.
+  3. Improve performance: The MonteCarlo search of an attached-and-nonoverlapped configuration has been parallelized using openmp.
 
 #### Oct 28, 2016:
   Initial release.
@@ -52,10 +52,10 @@
   length is scaled such that spherule radius is 1.0.
 
 ### Accuracy
-Maximum error of the center-to-center distance between two-spherules in contact never exceeds 0.005 (typically < 0.001). You can change the tolerance by changing the parameter "tol" defined in "aggregate_gen_main.cpp"
+Maximum error of the center-to-center distance between two-spherules in contact never exceeds 0.005 (typically < 0.001) by default. You can change this tolerance by changing the parameter "tol" defined in "aggregate_gen_main.cpp".
 
-### Limitation of (kf,Df)
-Under the constraint of the fractal-scaling law, finding of an attached-and-nonoverlapped aggregate configuration could be unrealistic for compact (i.e., closely-packed) aggregates. To avoid the infinite looping of the search algorithm, please choose the geometrical parameters (kf,Df) to be kf+Df < ~3.4.
+### Limitation of (*kf*,*Df*)
+Under the constraint of the fractal-scaling law, finding of an attached-and-nonoverlapped aggregate configuration could be unrealistic for compact (i.e., closely-packed) aggregates. To avoid the infinite looping of the search algorithm, please choose the geometrical parameters (*kf*,*Df*) to be *kf*+*Df* < ~3.4.
 
 ### Random number seed
 If necessary, random number seed can be changed at line14-15 of "aggregate_gen_main.cpp".
