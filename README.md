@@ -3,23 +3,23 @@
 
 ### History:
 #### Aug 14, 2018:
-  -Bugfix: An algorithm error causing the partial overlapping between some spherules has been fixed.
-  -Improve reliability: Internal tests of non-overlapping and attached conditions are added.
-  -Improve performance: The MonteCarlo search of an attached-and-nonoverlapped configuration has been parallelized using openmp.
+  * Bugfix: An algorithm error causing the partial overlapping between some spherules has been fixed.
+  * Improve reliability: Internal tests of non-overlapping and attached conditions are added.
+  * Improve performance: The MonteCarlo search of an attached-and-nonoverlapped aggregate configuration is parallelized using openmp.
 
 #### Oct 28, 2016:
-  Initial release.
+  * Initial release.
 
 ### General Descriptions:
-  A C++ code for calculating the geometrical coordinate of fractal-like cluster of spheres, using the tunable cluster-cluster aggregation (CCA) method.
-  A user is allowed to change the geometrical parameters: the number of spherules N, the fractal prefactor kf, and the fractal dimension Df.
-  The excecusion speed automatically improves with the available number of CPU cores. 
+  * A C++ code for calculating the geometrical coordinate of fractal-like cluster of spheres, using the tunable cluster-cluster aggregation (CCA) method.
+  * A user is allowed to change the geometrical parameters: the number of spherules N, the fractal prefactor kf, and the fractal dimension Df.
+  * The excecusion speed automatically improves with the available number of CPU cores.
 
 
 ### Prerequisites:
-  -A C++ compiler supporting C++17 and openmp. The author tested the code using the g++ version 7.3.0.
-  -A C++ library for linear algebra "Eigen" with version 3.3.5 or newer. The author tested the code using the Eigen version 3.3.5.
-  -An automated compilation and build system "CMake". The author tested the code using the CMake version 3.10.2.
+  1. A C++ compiler supporting C++17 and openmp. The author tested the code using the g++ version 7.3.0.
+  2. A C++ library for linear algebra "Eigen" with version 3.3.5 or newer. The author tested the code using the Eigen version 3.3.5.
+  3. An automated compilation and build system "CMake". The author tested the code using the CMake version 3.10.2.
 
 
 ### Usage:
@@ -27,14 +27,15 @@
   In particular,please change the "CMAKE_CXX_COMPILER" (= C++ complier) and "include_directories" (= absolute path of Eigen folder).
 
   2. Compilation and linking are performed by
-
-        cmake .
-        make
+```
+            cmake .
+            make
+```
 
   3. Run the executable by
-
-      './aggregate_gen_main [parameter_list]'
-
+```
+           ./aggregate_gen_main [parameter_list]
+```
     [parameter_list] == *num_sph_SA* *levels*  *kf*  *Df*
 
     * *num_sph_SA* : Number of spherules in initial clusters in the 1st level of cluster-cluster aggregation (4).
@@ -52,10 +53,10 @@
   length is scaled such that spherule radius is 1.0.
 
 ### Accuracy
-Maximum error of the center-to-center distance between two-spherules in contact never exceeds 0.005 (typically < 0.001) by default. You can change this tolerance by changing the parameter "tol" defined in "aggregate_gen_main.cpp".
+Maximum error of the center-to-center distance between two-spherules in contact never exceeds 0.005 (typically < 0.001). You can change the tolerance by changing the parameter "tol" defined in "aggregate_gen_main.cpp"
 
-### Limitation of the geometeric parameters
-Under the constraint of the fractal-scaling law, finding of an attached-and-nonoverlapped aggregate configuration could be unrealistic for compact (i.e., closely-packed) aggregates. To avoid the infinite looping of the search algorithm, please choose the geometric parameters (*kf*,*Df*) to be *kf*+*Df* < ~3.4.
+### Limitation of (kf,Df)
+Under the constraint of the fractal-scaling law, finding of an attached-and-nonoverlapped aggregate configuration could be unrealistic for compact (i.e., closely-packed) aggregates. To avoid the infinite looping of the search algorithm, please choose the geometrical parameters (kf,Df) to be kf+Df < ~3.4.
 
 ### Random number seed
 If necessary, random number seed can be changed at line14-15 of "aggregate_gen_main.cpp".
