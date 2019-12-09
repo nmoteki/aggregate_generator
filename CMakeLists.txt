@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.10.0)
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS "-O3 -fopenmp -DNDEBUG -DEIGEN_NO_DEBUG")
-include_directories(/mnt/c/Users/moteki/WSL_Share_Ubuntu1804/C++/eigen_3_3_5)
+include_directories(~/C++/eigen_3_3_5)
 
 project(aggregate_gen)
 

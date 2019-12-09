@@ -2,6 +2,11 @@
 ---
 
 ### History:
+#### Oct 23, 2019:
+  * Change the output result: output the aggregate files of all levels at once.
+  * Change the output result: the user can specify the number of aggreagtes produced by a single execution (using different random seeds).
+  * Improve reliability: Internal tests algorithm for non-overlapping and attached conditions are improved.
+
 #### Aug 14, 2018:
   * Bugfix: An algorithm error causing the partial overlapping between some spherules has been fixed.
   * Improve reliability: Internal tests of non-overlapping and attached conditions are added.
@@ -43,12 +48,13 @@
     levels : Number of hierarchical levels in cluster-cluster aggregation (10).
     kf : Fractal prefactor (1.0).
     Df : Fractal dimension (2.5).
+    num_agg : Number of aggregates generated using different random seeds.
 
     If you skip the [parameter_list], the code uses the default values in the parenthesis. Total number of spherules is *N* = num_sph_SA*2<sup>levels</sup>.
 ```
 
 ### Output data
-  The result is written in a text file "agg_N???_kf???_Df???.out", where the three strings ??? indicate the total number of spherules *N*, the fractal prefactor *kf*, and the fractal dimension *Df*.
+  The result is written in a text file "agg???_N???_kf???_Df???.out", where the three strings ??? indicate the aggregate id number (0 ~ num_agg), total number of spherules *N*, the fractal prefactor *kf*, and the fractal dimension *Df*, respectively.
 
   In this file, each row shows the cartesian coordinate "x y z" of each spherules relative to the centroid of cluster, where the
   length is scaled such that spherule radius is 1.0.
