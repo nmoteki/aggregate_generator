@@ -79,7 +79,7 @@ By default, the seed of random_number sequence is automatically changed in each 
 ### Contact
 nobuhiro.moteki@gmail.com, or, moteki@eps.s.u-tokyo.ac.jp
 
-### Citation
+### How to Cite
 Moteki N. "aggregate_gen" -- An efficient C++ code for generating fractal cluster of spheres, nmoteki/aggregate_generator (v1.1), GitHub repository, Doi:10.5281/zenodo.3567236. 2019.
 
 ### Licence
