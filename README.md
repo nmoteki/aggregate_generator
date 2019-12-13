@@ -42,7 +42,7 @@
            ./aggregate_gen_main [parameter_list]
 ```
 ```
-    [parameter_list] == num_sph_SA levels kf Df
+    [parameter_list] == num_sph_SA levels kf Df num_agg
 
     num_sph_SA : Number of spherules in initial clusters in the 1st level of cluster-cluster aggregation (4).
     levels : Number of hierarchical levels in cluster-cluster aggregation (10).
@@ -54,7 +54,7 @@
 ```
 
 ### Output data
-  The result is written in a text file "agg???_N???_kf???_Df???.out", where the three strings ??? indicate the aggregate id number (0 ~ num_agg), total number of spherules *N*, the fractal prefactor *kf*, and the fractal dimension *Df*, respectively.
+  The result is written in a text file "agg???_N???_kf???_Df???.out", where the four strings ??? indicate the aggregate id number (0 ~ num_agg), total number of spherules *N*, the fractal prefactor *kf*, and the fractal dimension *Df*, respectively.
 
   In this file, each row shows the cartesian coordinate "x y z" of each spherules relative to the centroid of cluster, where the
   length is scaled such that spherule radius is 1.0.
